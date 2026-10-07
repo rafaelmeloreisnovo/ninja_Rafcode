@@ -1,0 +1,27 @@
+{
+  "aarch64_codegen": "PASS",
+  "armv7_codegen": "PASS",
+  "claim_allowed_beyond_provider_build_codegen": false,
+  "formal_clean_room_certification": false,
+  "head_sha": "51e3f0706f676eb25eef244b1461d7a5f98240e8",
+  "host_freestanding_object": "PASS",
+  "host_stack_call_markers": 0,
+  "host_undefined_symbols": 0,
+  "hosted_semantic_harness": "PASS",
+  "linked_elf_interp": 0,
+  "linked_elf_needed": 0,
+  "linker": "/usr/bin/ld",
+  "performance_gain": "TOKEN_VAZIO",
+  "physical_runtime": "TOKEN_VAZIO",
+  "provider": "github-actions",
+  "runner": "ubuntu-24.04",
+  "schema": "RAFCODE_ORIGIN_PROVIDER_V1",
+  "sha256": {
+    "aarch64": "c0195ee473f3a8e36a5a507cbf982ef08578fae6f76468d19c6eaadd0126225d",
+    "armv7": "fd6abdce02fd685cf8efe71a264f8727db3b076117f891342296ac835a45b4fb",
+    "host_core": "dc42874e8ce76de1d797644113bb357dff7d67664d39e1739412cc1b325a912a",
+    "linked_elf": "e8d40fdd695f70611090c43bbda8521d8e9e92150643044a6bb551c9fe4efbb7",
+    "semantic": "ac22a045aeb5934e181ebd737f49dcf0e7a85bab926a0bdb640d514b7d4bade7"
+  },
+  "source_boundary": "PASS"
+}
