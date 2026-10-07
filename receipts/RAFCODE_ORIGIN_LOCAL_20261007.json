@@ -1,0 +1,40 @@
+{
+  "schema": "RAFCODE_ORIGIN_LOCAL_V1",
+  "date": "2026-10-07",
+  "claim": "independent authored rewrite from generic functional requirements",
+  "clean_room_certified": false,
+  "runtime_contract": {
+    "libc": 0,
+    "heap": 0,
+    "syscalls": 0,
+    "recursion": 0,
+    "source_loop_in_core": 0,
+    "external_runtime_symbols": 0,
+    "frame_bytes": 16
+  },
+  "local_evidence": {
+    "semantic_exit": 0,
+    "x86_64_stack_markers": 0,
+    "x86_64_call_markers": 0,
+    "x86_64_core_text_bytes": 910,
+    "linked_elf_bytes": 5560,
+    "elf_interp_segments": 0,
+    "elf_dynamic_needed": 0,
+    "host_core_sha256": "4d71dfa4377003ccaf2dbeb987d1d0009c5824e106fdca29483a042590eaed3e",
+    "x86_leaf_sha256": "a114ba99b5fa6f79d2b98bb425015e63023016b80ee6653058c0e6beb9adb2e7",
+    "linked_elf_sha256": "dcd7f873dedc1d751b154550714df02cb95e83c93a0c4aecc017d15d6744b1f0",
+    "semantic_binary_sha256": "3e652eb9486f8d339907dacb78cada7be395ee9800bef813e2840073540ac7b6"
+  },
+  "cross_target": {
+    "x86_64-unknown-none": {"undefined":0,"bytes":1936,"sha256":"54be548da29c3502a56f517c21e1895dfbda5f7a4895b403c3977af9c1214b01"},
+    "i686-unknown-none": {"undefined":0,"bytes":1840,"sha256":"14ea3e3718734a08bb5cc4ba180ea0f1df8c8de8aa90f7949e7a45204ba4414e"},
+    "armv7-none-eabi": {"undefined":0,"bytes":2164,"sha256":"128fb1ea05897791695875fba69100c481684e95767fa78b3fd121938593f600"},
+    "aarch64-none-elf": {"undefined":0,"bytes":1920,"sha256":"06847a932ad4078e040c3f236d9b7d448eb62fa29e75ef324a5709beea06a7b5"},
+    "riscv32-unknown-elf": {"undefined":0,"bytes":2584,"sha256":"00fd88fbad020e44e1987c4d406ed324f2cb5bca460e389d760ebda6ab917aec"},
+    "riscv64-unknown-elf": {"undefined":0,"bytes":3328,"sha256":"68e05a484eae1760e7485297a492e71827e189681a00c2274132924151f52cdf"},
+    "powerpc64le-unknown-linux-gnu": {"undefined":0,"bytes":1976,"sha256":"698f409ef9a2fcbad53c10cf6b93f6f6dae9ff6ad86d5b888b7077164085507f"},
+    "s390x-unknown-linux-gnu": {"undefined":0,"bytes":2024,"sha256":"de60667c5edf64c097a1419324acfac13be0908d32ed6f3eb4e1248139225371"}
+  },
+  "token_vazio": ["provider_ci","physical_runtime","performance_gain","formal_clean_room_certification"],
+  "claim_allowed_beyond_local_build_codegen": false
+}
