@@ -41,12 +41,13 @@ jobs:
         run: |
           set -euo pipefail
           command -v clang
-          command -v ld.lld
+          LINKER="$(command -v ld.lld || command -v ld)"
           command -v llvm-nm || command -v nm
           command -v llvm-objdump || command -v objdump
           command -v readelf
           clang --version | sed -n '1p'
-          ld.lld --version | sed -n '1p'
+          "$LINKER" --version | sed -n '1p'
+          printf 'RAFCODE_PROVIDER_LINKER=%s\n' "$LINKER" | tee build-linker.env
 
       - name: Source boundary
         shell: bash
@@ -76,7 +77,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ld.lld -T link/rafk.ld -o build/provider/rafk_core.elf build/provider/rafk_core.o
+          LINKER="$(command -v ld.lld || command -v ld)"
+          "$LINKER" -T link/rafk.ld -o build/provider/rafk_core.elf build/provider/rafk_core.o
           readelf -l build/provider/rafk_core.elf > build/provider/readelf-program.txt
           readelf -d build/provider/rafk_core.elf > build/provider/readelf-dynamic.txt 2>&1 || true
           ! grep -q 'INTERP' build/provider/readelf-program.txt
@@ -132,6 +134,7 @@ jobs:
               "head_sha": os.environ.get("GITHUB_SHA", "TOKEN_VAZIO"),
               "provider": "github-actions",
               "runner": "ubuntu-24.04",
+              "linker": Path("build-linker.env").read_text(encoding="utf-8").strip().split("=", 1)[1],
               "source_boundary": "PASS",
               "host_freestanding_object": "PASS",
               "host_undefined_symbols": 0,
