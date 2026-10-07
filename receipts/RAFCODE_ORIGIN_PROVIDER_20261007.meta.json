@@ -1,0 +1,23 @@
+{
+  "schema": "RAFCODE_ORIGIN_PROVIDER_CUSTODY_V1",
+  "date": "2026-10-07",
+  "repository": "rafaelmeloreisnovo/ninja_Rafcode",
+  "pull_request": 3,
+  "source_branch_head": "347bd167e5f8594bde50c2d4782e946f13c7ad59",
+  "provider_event_sha": "51e3f0706f676eb25eef244b1461d7a5f98240e8",
+  "provider_event_sha_role": "GitHub pull_request synthetic merge-ref SHA exposed as GITHUB_SHA inside the workflow",
+  "workflow_run_id": 37696198065,
+  "workflow_conclusion": "success",
+  "artifact_id": 11515223333,
+  "artifact_digest": "sha256:95575307d73cbdb28a388ec478ff868d6d39499f4dd86caa7346bba83b862b7f",
+  "artifact_expires_at": "2026-11-06T22:26:40Z",
+  "promoted_master_commit": "0ef6e909c85e87b8c50d53572cc301fb71119517",
+  "raw_receipt_path": "receipts/RAFCODE_ORIGIN_PROVIDER_20261007.json",
+  "evidence_boundary": {
+    "provider_build_codegen": "PASS",
+    "physical_runtime": "TOKEN_VAZIO",
+    "performance_gain": "TOKEN_VAZIO",
+    "formal_clean_room_certification": false,
+    "claim_allowed_beyond_provider_build_codegen": false
+  }
+}
