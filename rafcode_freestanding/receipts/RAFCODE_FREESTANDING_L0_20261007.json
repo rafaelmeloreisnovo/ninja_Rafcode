@@ -1,0 +1,60 @@
+{
+  "schema": "RAFCODE_FREESTANDING_L0_RECEIPT_V1",
+  "date": "2026-10-07",
+  "repository": "rafaelmeloreisnovo/ninja_Rafcode",
+  "branch": "feat/rafcode-freestanding-l0-v1-20261007",
+  "source_head_before_receipt": "a74c91f05036b006629df541844c04e3f8f74608",
+  "base_master": "4e4df1e567eb3c1475a51af261cba2bfff60b4be",
+  "authority": {
+    "new_authored_subtree": "rafcode_freestanding/",
+    "author": "Rafael Melo Reis",
+    "license": "Apache-2.0",
+    "inherited_ninja_relabelled": false
+  },
+  "core_contract": {
+    "libc": 0,
+    "heap": 0,
+    "syscalls": 0,
+    "recursion": 0,
+    "source_loops_in_observer": 0,
+    "external_runtime_symbols": 0,
+    "context": 0,
+    "attention": 0,
+    "learned_weights": 0,
+    "states": ["ABSENT","EMPTY","NUL","SPACE","BYTE","SEQUENCE","INVALID"]
+  },
+  "local_evidence": {
+    "compiler": "clang 17.0.0",
+    "semantic_probe_exit": 0,
+    "host_core_object_sha256": "a44730a48a81270c0bb84963a3b8094d10c703fd35d4ba1c408220d38ccae649",
+    "host_linked_elf_sha256": "d80a42bbcbb727767495354be86049b149b0e4c1381e165cb32912fb997576a2",
+    "x86_64_leaf_object_sha256": "e054ef0f94df602b8aace87eec49df02c3414d334786b11112347f06f8733571",
+    "semantic_test_sha256": "418d3c528bfb826a9d6ad07ba5233b52c81140c8c73da1ec041d74f3a4430ae1",
+    "core_text_bytes": 232,
+    "linked_elf_bytes": 4840,
+    "undefined_core": 0,
+    "undefined_elf": 0,
+    "x86_64_stack_markers": 0,
+    "x86_64_call_markers": 0,
+    "elf_interp_segments": 0,
+    "elf_dynamic_section": false
+  },
+  "cross_target_compile": {
+    "x86_64-unknown-none": {"status":"PASS","undefined":0,"object_bytes":1096},
+    "i686-unknown-none": {"status":"PASS","undefined":0,"object_bytes":884},
+    "armv7-none-eabi": {"status":"PASS","undefined":0,"object_bytes":1168},
+    "aarch64-none-elf": {"status":"PASS","undefined":0,"object_bytes":1120},
+    "riscv32-unknown-elf": {"status":"PASS","undefined":0,"object_bytes":1480},
+    "riscv64-unknown-elf": {"status":"PASS","undefined":0,"object_bytes":1968},
+    "powerpc64le-unknown-linux-gnu": {"status":"PASS","undefined":0,"object_bytes":1128},
+    "s390x-unknown-linux-gnu": {"status":"PASS","undefined":0,"object_bytes":1128}
+  },
+  "boundaries": {
+    "build_codegen_pass_is_physical_runtime_pass": false,
+    "performance_claim": "TOKEN_VAZIO",
+    "physical_device_execution": "TOKEN_VAZIO",
+    "provider_ci_for_new_subtree": "TOKEN_VAZIO",
+    "full_ninja_freestanding": false,
+    "claim_allowed_beyond_scoped_build_codegen": false
+  }
+}
