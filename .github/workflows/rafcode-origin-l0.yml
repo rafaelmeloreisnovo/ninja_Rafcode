@@ -1,0 +1,168 @@
+# Copyright 2026 Rafael Melo Reis
+# SPDX-License-Identifier: Apache-2.0
+name: RAFCODE Origin L0 Provider Gate
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'link/**'
+      - 'tests/**'
+      - '.github/workflows/rafcode-origin-l0.yml'
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'link/**'
+      - 'tests/**'
+      - '.github/workflows/rafcode-origin-l0.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  l0-provider-gate:
+    name: Authored freestanding L0
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Toolchain identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v clang
+          command -v ld.lld
+          command -v llvm-nm || command -v nm
+          command -v llvm-objdump || command -v objdump
+          command -v readelf
+          clang --version | sed -n '1p'
+          ld.lld --version | sed -n '1p'
+
+      - name: Source boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(grep -RInE '^[[:space:]]*#[[:space:]]*include[[:space:]]*<(stdio|stdlib|string|unistd|sys/|malloc|pthread|dlfcn)' src include || true)"
+          test -z "$(grep -RInE '\b(malloc|calloc|realloc|free|printf|fprintf|puts|system|fork|exec[a-z]*|syscall|dlopen|pthread_)\b' src include || true)"
+          test -z "$(grep -nE '\b(for|while)[[:space:]]*\(' src/rafk_core.c || true)"
+          grep -Fq 'SPDX-License-Identifier: Apache-2.0' src/rafk_core.c
+          grep -Fq 'SPDX-License-Identifier: Apache-2.0' include/rafk_protocol.h
+          grep -Fq 'SPDX-License-Identifier: Apache-2.0' include/rafk_types.h
+
+      - name: Build core freestanding object
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/provider
+          clang -std=c11 -Os -Wall -Wextra -Werror \
+            -ffreestanding -fno-builtin -fno-stack-protector \
+            -fno-asynchronous-unwind-tables -fno-unwind-tables \
+            -Iinclude -c src/rafk_core.c -o build/provider/rafk_core.o
+          NM="$(command -v llvm-nm || command -v nm)"
+          test -z "$("$NM" -u build/provider/rafk_core.o)"
+          sha256sum build/provider/rafk_core.o | tee build/provider/core.sha256
+
+      - name: Link freestanding ELF
+        shell: bash
+        run: |
+          set -euo pipefail
+          ld.lld -T link/rafk.ld -o build/provider/rafk_core.elf build/provider/rafk_core.o
+          readelf -l build/provider/rafk_core.elf > build/provider/readelf-program.txt
+          readelf -d build/provider/rafk_core.elf > build/provider/readelf-dynamic.txt 2>&1 || true
+          ! grep -q 'INTERP' build/provider/readelf-program.txt
+          ! grep -q '(NEEDED)' build/provider/readelf-dynamic.txt
+          sha256sum build/provider/rafk_core.elf | tee build/provider/elf.sha256
+
+      - name: Hosted semantic harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          cc -std=c11 -O2 -Wall -Wextra -Werror -Iinclude \
+            src/rafk_core.c tests/semantic.c -o build/provider/semantic
+          build/provider/semantic
+          sha256sum build/provider/semantic | tee build/provider/semantic.sha256
+
+      - name: Host codegen stack and call audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          OBJDUMP="$(command -v llvm-objdump || command -v objdump)"
+          "$OBJDUMP" -d build/provider/rafk_core.o > build/provider/core.disasm
+          test -z "$(grep -E '(%rsp|%rbp|[[:space:]]push[qwl]?[[:space:]]|[[:space:]]pop[qwl]?[[:space:]]|[[:space:]]call[q]?[[:space:]])' build/provider/core.disasm || true)"
+
+      - name: Cross-codegen ARMv7 and AArch64
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --target=armv7-none-eabi -std=c11 -Os -Wall -Wextra -Werror \
+            -ffreestanding -fno-builtin -fno-stack-protector \
+            -fno-asynchronous-unwind-tables -fno-unwind-tables \
+            -Iinclude -c src/rafk_core.c -o build/provider/rafk_core.armv7.o
+          clang --target=aarch64-none-elf -std=c11 -Os -Wall -Wextra -Werror \
+            -ffreestanding -fno-builtin -fno-stack-protector \
+            -fno-asynchronous-unwind-tables -fno-unwind-tables \
+            -Iinclude -c src/rafk_core.c -o build/provider/rafk_core.aarch64.o
+          NM="$(command -v llvm-nm || command -v nm)"
+          test -z "$("$NM" -u build/provider/rafk_core.armv7.o)"
+          test -z "$("$NM" -u build/provider/rafk_core.aarch64.o)"
+          sha256sum build/provider/rafk_core.armv7.o build/provider/rafk_core.aarch64.o \
+            | tee build/provider/cross.sha256
+
+      - name: Emit bounded provider receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          def sha(path):
+              return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+          doc = {
+              "schema": "RAFCODE_ORIGIN_PROVIDER_V1",
+              "head_sha": os.environ.get("GITHUB_SHA", "TOKEN_VAZIO"),
+              "provider": "github-actions",
+              "runner": "ubuntu-24.04",
+              "source_boundary": "PASS",
+              "host_freestanding_object": "PASS",
+              "host_undefined_symbols": 0,
+              "linked_elf_interp": 0,
+              "linked_elf_needed": 0,
+              "host_stack_call_markers": 0,
+              "hosted_semantic_harness": "PASS",
+              "armv7_codegen": "PASS",
+              "aarch64_codegen": "PASS",
+              "physical_runtime": "TOKEN_VAZIO",
+              "performance_gain": "TOKEN_VAZIO",
+              "formal_clean_room_certification": False,
+              "claim_allowed_beyond_provider_build_codegen": False,
+              "sha256": {
+                  "host_core": sha("build/provider/rafk_core.o"),
+                  "linked_elf": sha("build/provider/rafk_core.elf"),
+                  "semantic": sha("build/provider/semantic"),
+                  "armv7": sha("build/provider/rafk_core.armv7.o"),
+                  "aarch64": sha("build/provider/rafk_core.aarch64.o"),
+              },
+          }
+          Path("build/provider/RAFCODE_ORIGIN_PROVIDER.json").write_text(
+              json.dumps(doc, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          print(json.dumps(doc, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload provider receipt
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: rafcode-origin-provider-\${{ github.sha }}
+          path: build/provider/
+          if-no-files-found: error
+          retention-days: 30
