@@ -1,7 +1,6 @@
 # RAFCODE Origin
 
 Copyright 2026 Rafael Melo Reis  
-SPDX-License-Identifier: Apache-2.0
 
 A new authored freestanding command nucleus.
 
