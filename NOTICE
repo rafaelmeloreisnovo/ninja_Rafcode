@@ -1,8 +1,15 @@
 RAFCODE Origin
 Copyright 2026 Rafael Melo Reis
 
-The current authored snapshot is a new implementation.
+FORK / RIGHTS BOUNDARY
 
-The Git repository may retain historical commits originating from the Ninja project.
-Those historical materials retain their original copyright notices and licensing and
-are not claimed as RAFCODE authorship.
+This Git repository retains history derived from the Ninja project.
+Inherited Ninja materials retain their original copyright notices and licensing.
+The root COPYING file is the restored upstream Ninja license artifact and is not a
+new license grant by Rafael Melo Reis.
+
+New RAFCODE-authored material is a separate authorship boundary.
+No outbound license for that authored material is granted by this correction.
+Current state: LICENSE_STATE=TOKEN_VAZIO; OUTBOUND_LICENSE_GRANT=false.
+
+Fork ownership does not transfer authorship or copyright in inherited material.
