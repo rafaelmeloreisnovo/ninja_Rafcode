@@ -1,7 +1,6 @@
 # RAFCODE command model
 
 Copyright 2026 Rafael Melo Reis  
-SPDX-License-Identifier: Apache-2.0
 
 This is an authored requirements model, not a translation of another build tool.
 
