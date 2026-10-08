@@ -1,5 +1,4 @@
 # Copyright 2026 Rafael Melo Reis
-# SPDX-License-Identifier: Apache-2.0
 name: RAFCODE Origin L0 Provider Gate
 
 on:
@@ -10,6 +9,13 @@ on:
       - 'link/**'
       - 'tests/**'
       - '.github/workflows/rafcode-origin-l0.yml'
+      - 'COPYING'
+      - 'LICENSE_POLICY.md'
+      - 'AUTHORITY.md'
+      - 'NOTICE'
+      - 'README.md'
+      - 'docs/**'
+      - 'arch/**'
   push:
     branches:
       - master
@@ -19,6 +25,13 @@ on:
       - 'link/**'
       - 'tests/**'
       - '.github/workflows/rafcode-origin-l0.yml'
+      - 'COPYING'
+      - 'LICENSE_POLICY.md'
+      - 'AUTHORITY.md'
+      - 'NOTICE'
+      - 'README.md'
+      - 'docs/**'
+      - 'arch/**'
   workflow_dispatch:
 
 permissions:
@@ -56,9 +69,17 @@ jobs:
           test -z "$(grep -RInE '^[[:space:]]*#[[:space:]]*include[[:space:]]*<(stdio|stdlib|string|unistd|sys/|malloc|pthread|dlfcn)' src include || true)"
           test -z "$(grep -RInE '\b(malloc|calloc|realloc|free|printf|fprintf|puts|system|fork|exec[a-z]*|syscall|dlopen|pthread_)\b' src include || true)"
           test -z "$(grep -nE '\b(for|while)[[:space:]]*\(' src/rafk_core.c || true)"
-          grep -Fq 'SPDX-License-Identifier: Apache-2.0' src/rafk_core.c
-          grep -Fq 'SPDX-License-Identifier: Apache-2.0' include/rafk_protocol.h
-          grep -Fq 'SPDX-License-Identifier: Apache-2.0' include/rafk_types.h
+          test -f COPYING
+          test ! -e LICENSE
+          grep -Fq 'LICENSE_STATE=TOKEN_VAZIO' LICENSE_POLICY.md
+          grep -Fq 'OUTBOUND_LICENSE_GRANT=false' LICENSE_POLICY.md
+          grep -Fq 'UPSTREAM_LICENSE != RAFCODE_LICENSE' LICENSE_POLICY.md
+          if grep -R -n -F 'SPDX-License-Identifier: Apache-2.0' \
+            src/rafk_core.c include/rafk_protocol.h include/rafk_types.h \
+            arch/x86_64/rafk_hint.S link/rafk.ld tests/semantic.c docs README.md; then
+            echo 'ERROR: unapproved Apache-2.0 marker in RAFCODE-authored boundary' >&2
+            exit 1
+          fi
 
       - name: Build core freestanding object
         shell: bash
