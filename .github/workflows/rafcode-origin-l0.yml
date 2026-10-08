@@ -74,7 +74,8 @@ jobs:
           grep -Fq 'LICENSE_STATE=TOKEN_VAZIO' LICENSE_POLICY.md
           grep -Fq 'OUTBOUND_LICENSE_GRANT=false' LICENSE_POLICY.md
           grep -Fq 'UPSTREAM_LICENSE != RAFCODE_LICENSE' LICENSE_POLICY.md
-          if grep -R -n -F 'SPDX-License-Identifier: Apache-2.0' \
+          forbidden_spdx='SPDX-License-Identifier: Apache-2.''0'
+          if grep -R -n -F "$forbidden_spdx" \
             src/rafk_core.c include/rafk_protocol.h include/rafk_types.h \
             arch/x86_64/rafk_hint.S link/rafk.ld tests/semantic.c docs README.md; then
             echo 'ERROR: unapproved Apache-2.0 marker in RAFCODE-authored boundary' >&2
