@@ -33,3 +33,22 @@ Unknown or ambiguous license identity is `TOKEN_VAZIO/BLOCKED`.
 
 A license label such as "PET" is **not inferred** without an exact license text or stable
 identifier. No material is accepted merely because it is public, forkable, or accessible.
+
+
+## Fork/license separation correction
+
+The repository is a fork with historical Ninja material. The upstream Ninja
+`COPYING` is an inherited rights artifact and remains attributable to upstream
+rightsholders.
+
+New RAFCODE-authored material is a separate authorship boundary. This document
+does not assign Apache-2.0 or any other outbound license to that new material.
+
+Current authored-code license state:
+
+`LICENSE_STATE=TOKEN_VAZIO`  
+`OUTBOUND_LICENSE_GRANT=false`
+
+Any earlier repository statement assigning Apache-2.0 to the RAFCODE-authored
+snapshot is superseded by this correction and must not be used as current
+authorization.
