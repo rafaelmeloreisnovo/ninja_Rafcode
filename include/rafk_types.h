@@ -1,5 +1,4 @@
 /* Copyright 2026 Rafael Melo Reis
- * SPDX-License-Identifier: Apache-2.0
  */
 #ifndef RAFK_TYPES_H
 #define RAFK_TYPES_H

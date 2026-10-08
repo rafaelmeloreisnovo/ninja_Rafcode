@@ -1,7 +1,6 @@
 # Rights gate
 
 Copyright 2026 Rafael Melo Reis  
-SPDX-License-Identifier: Apache-2.0
 
 P0 ordering:
 

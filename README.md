@@ -1,9 +1,20 @@
 # RAFCODE Origin
 
 Copyright 2026 Rafael Melo Reis  
-SPDX-License-Identifier: Apache-2.0
 
 A new authored freestanding command nucleus.
+
+## Fork and rights boundary
+
+This repository has Ninja-derived Git history. Inherited Ninja material keeps its
+original authorship and license; the upstream license artifact is `COPYING`.
+
+New RAFCODE-authored material is a separate rights boundary. No outbound license
+for that authored material is selected by this repository correction:
+
+`LICENSE_STATE=TOKEN_VAZIO` · `OUTBOUND_LICENSE_GRANT=false`
+
+See `LICENSE_POLICY.md` and `AUTHORITY.md`.
 
 This snapshot is intentionally **not organized as Ninja** and does not reuse Ninja
 source files, parser model, build-graph implementation, command syntax, internal names,

@@ -1,5 +1,4 @@
 /* Copyright 2026 Rafael Melo Reis
- * SPDX-License-Identifier: Apache-2.0
  */
 /* Optional authored leaf: pure register permutation, not required by the core. */
 .section .rafcode.text.arch,"ax",@progbits
