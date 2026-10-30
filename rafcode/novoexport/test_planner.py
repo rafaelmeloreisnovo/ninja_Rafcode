@@ -71,15 +71,6 @@ class TestPlanner(unittest.TestCase):
         swapped["nodes"][0]["deps"].reverse()
         self.assertEqual(plan(m), plan(swapped))
 
-    def test_invalid_prior_fingerprint(self):
-        with self.assertRaises(InvalidPlan):
-            plan({"nodes": [node("a")]}, {"fingerprints": {"a": "PASS"}})
-
-    def test_empty_manifest_is_not_source_proof(self):
-        out = plan({"nodes": []})
-        self.assertEqual(out["jobs"], [])
-        self.assertFalse(out["claim_allowed"])
-
     def test_unhashable_role_fails_closed(self):
         m = {"nodes": [node("a", role=[])]}
         with self.assertRaises(InvalidPlan):
@@ -90,6 +81,15 @@ class TestPlanner(unittest.TestCase):
             plan({"nodes": [], "payload": "raw"})
         with self.assertRaises(InvalidPlan):
             plan({"nodes": [dict(node("a"), text="private")]})
+    def test_invalid_prior_fingerprint(self):
+        with self.assertRaises(InvalidPlan):
+            plan({"nodes": [node("a")]}, {"fingerprints": {"a": "PASS"}})
+
+    def test_empty_manifest_is_not_source_proof(self):
+        out = plan({"nodes": []})
+        self.assertEqual(out["jobs"], [])
+        self.assertFalse(out["claim_allowed"])
+
 
 
 if __name__ == "__main__":
