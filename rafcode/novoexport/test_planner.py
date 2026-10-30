@@ -81,6 +81,7 @@ class TestPlanner(unittest.TestCase):
             plan({"nodes": [], "payload": "raw"})
         with self.assertRaises(InvalidPlan):
             plan({"nodes": [dict(node("a"), text="private")]})
+
     def test_invalid_prior_fingerprint(self):
         with self.assertRaises(InvalidPlan):
             plan({"nodes": [node("a")]}, {"fingerprints": {"a": "PASS"}})
@@ -89,7 +90,6 @@ class TestPlanner(unittest.TestCase):
         out = plan({"nodes": []})
         self.assertEqual(out["jobs"], [])
         self.assertFalse(out["claim_allowed"])
-
 
 
 if __name__ == "__main__":
