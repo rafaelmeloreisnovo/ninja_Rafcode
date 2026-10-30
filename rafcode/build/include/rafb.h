@@ -20,6 +20,7 @@ typedef __UINT32_TYPE__ rafb_u32;
 #define RAFB_ALLOW_FAILOVER 0x0004u
 #define RAFB_ALLOW_FAILBACK 0x0008u
 #define RAFB_NO_CLAIM 0x8000u
+#define RAFB_VALID_FLAGS 0x800fu
 
 #define RAFB_READY 1u
 #define RAFB_RUNNING 2u
@@ -68,6 +69,7 @@ typedef struct {
   rafb_u8 recover; /* primary ID or NONE */
   rafb_u8 pending; /* spare ID or NONE */
   rafb_u8 failback_authorized;
+  rafb_module pinned[RAFB_LIMIT]; /* immutable by-value snapshot, no heap */
 } rafb_gate;
 
 /* All functions return 1=success, 0=blocked; no undefined "empty is 0".

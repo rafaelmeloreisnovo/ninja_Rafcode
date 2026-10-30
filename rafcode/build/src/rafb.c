@@ -7,6 +7,24 @@ static const rafb_module* get(const rafb_module* m, rafb_u8 n, rafb_u8 id) {
   for (i = 0u; i < n; ++i) if (m[i].id == id) return &m[i];
   return (const rafb_module*)0;
 }
+/* Exact scalar equality, not a probabilistic plan hash. Source bytes still require
+ * a host cryptographic digest. Reject any post-open one-bit plan mutation. */
+static int plan_ok(rafb_gate* g, const rafb_module* m) {
+  rafb_u8 i;
+  if (!g || !m || g->count==0u || g->count>RAFB_LIMIT) return 0;
+  for (i=0u; i<g->count; ++i) {
+    const rafb_module* a=&g->pinned[i];
+    const rafb_module* b=&m[i];
+    if (a->id!=b->id || a->abi!=b->abi || a->role!=b->role ||
+        a->fallback!=b->fallback || a->required_flags!=b->required_flags ||
+        a->reserved!=b->reserved || a->deps!=b->deps ||
+        a->budget_ticks!=b->budget_ticks || a->source_stamp!=b->source_stamp) {
+      g->state=RAFB_FAILSAFE; g->active=RAFB_NONE; g->event_code=5u;
+      return 0;
+    }
+  }
+  return 1;
+}
 static int fault(rafb_gate* g, const rafb_module* m, rafb_u32 cause) {
   const rafb_module* p = get(m, g->count, g->active);
   const rafb_module* b;
@@ -41,7 +59,7 @@ int rafb_open(rafb_gate* g, const rafb_module* m,
   g->event_code=0u; g->count=n; g->abi=abi; g->flags=flags;
   g->recover=RAFB_NONE; g->pending=RAFB_NONE; g->failback_authorized=0u;
   if (!m || n==0u || n>RAFB_LIMIT || abi>RAFB_BARE_RV64 ||
-      (flags & RAFB_NO_CLAIM)==0u) return 0;
+      ((flags & RAFB_NO_CLAIM)==0u) || (flags & ~RAFB_VALID_FLAGS)) return 0;
   for (i=0u; i<n; ++i) {
     if (m[i].id>=RAFB_LIMIT || (seen & bit(m[i].id)) || m[i].reserved ||
         m[i].budget_ticks==0u || m[i].role>RAFB_SPARE ||
@@ -69,6 +87,7 @@ int rafb_open(rafb_gate* g, const rafb_module* m,
       if (m[i].role==RAFB_PRIMARY && !(resolved & bit(m[i].id)) &&
           !(m[i].deps & ~resolved)) resolved |= bit(m[i].id);
   if (resolved != primaries) return 0;
+  for (i=0u;i<n;++i) g->pinned[i]=m[i];
   g->state = RAFB_READY;
   return 1;
 }
@@ -78,6 +97,7 @@ int rafb_next(rafb_gate* g, const rafb_module* m,
   if (!g || !m || !module_id ||
       (g->state!=RAFB_READY && g->state!=RAFB_RUNNING)) return 0;
   *module_id=RAFB_NONE;
+  if (!plan_ok(g,m)) return 0;
   if (g->state==RAFB_RUNNING) return 0; /* caller must ack/watchdog */
   if (g->pending!=RAFB_NONE) {
     const rafb_module* b=get(m,g->count,g->pending);
@@ -99,6 +119,7 @@ int rafb_next(rafb_gate* g, const rafb_module* m,
 int rafb_ack(rafb_gate* g, const rafb_module* m,
              rafb_u8 id, rafb_u8 success) {
   if (!g || !m || g->state!=RAFB_RUNNING || id!=g->active || success>1u) return 0;
+  if (!plan_ok(g,m)) return 0;
   if (!success) return fault(g,m,2u);
   g->done |= bit(id);
   if (g->recover!=RAFB_NONE) {g->done |= bit(g->recover);g->recover=RAFB_NONE;}
@@ -108,6 +129,7 @@ int rafb_ack(rafb_gate* g, const rafb_module* m,
 int rafb_watchdog(rafb_gate* g, const rafb_module* m, rafb_u32 now) {
   const rafb_module* p;
   if (!g || !m || g->state!=RAFB_RUNNING) return 0;
+  if (!plan_ok(g,m)) return 0;
   p=get(m,g->count,g->active);
   if (!p) {g->state=RAFB_FAILSAFE;return 0;}
   /* External monotonic ticks; elapsed < 2^31 is caller invariant. */

@@ -5,7 +5,7 @@ int main(void) {
   rafb_module m[3]={{0u,RAFB_ANY_ABI,RAFB_PRIMARY,1u,0u,0u,0u,5u,0x1234u},
                     {1u,RAFB_ANY_ABI,RAFB_SPARE,RAFB_NONE,0u,0u,0u,5u,0x5678u},
                     {2u,RAFB_ANY_ABI,RAFB_PRIMARY,RAFB_NONE,0u,0u,1u,5u,0xabcdU}};
-  rafb_gate g; rafb_u8 id, abi;
+  rafb_gate g; rafb_u8 id, abi, k;
   for (abi=0u;abi<8u;++abi) {
     CHECK(rafb_open(&g,m,3u,abi,F));
     CHECK(rafb_next(&g,m,1u,&id) && id==0u);
@@ -46,5 +46,18 @@ int main(void) {
   /* One-bit fault cascades: invalidate the dependent node, block whole graph. */
   m[2].deps ^= (1u<<7); CHECK(!rafb_open(&g,m,3u,0u,F));
   m[2].deps ^= (1u<<7); CHECK(rafb_open(&g,m,3u,0u,F));
+  CHECK(!rafb_open(&g,m,3u,0u,F | 0x4000u)); /* unknown flags */
+  /* Exactly 56 independent one-bit mutations after plan freeze.
+   * 32 source-stamp + 16 required-flags + 8 dependency bits. */
+  for (k=0u;k<56u;++k) {
+    CHECK(rafb_open(&g,m,3u,0u,F));
+    if (k<32u) m[0].source_stamp ^= (rafb_u32)1u<<k;
+    else if (k<48u) m[0].required_flags ^= (rafb_u16)1u<<(k-32u);
+    else m[2].deps ^= (rafb_u32)1u<<(k-48u);
+    CHECK(!rafb_next(&g,m,1u,&id) && g.state==RAFB_FAILSAFE && g.event_code==5u);
+    if (k<32u) m[0].source_stamp ^= (rafb_u32)1u<<k;
+    else if (k<48u) m[0].required_flags ^= (rafb_u16)1u<<(k-32u);
+    else m[2].deps ^= (rafb_u32)1u<<(k-48u);
+  }
   return 0;
 }

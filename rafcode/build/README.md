@@ -36,3 +36,6 @@ PHYSICAL_WATCHDOG=TOKEN_VAZIO | HOST_ROLLBACK=TOKEN_VAZIO
 claim_allowed=false
 
 Rollback of this change: close draft PR, or revert its single commit. No auto-merge and no modification to main/master.
+
+## Plan immutability falsifier
+A by-value snapshot of up to 8 module descriptors is frozen on `rafb_open`. `next`, `ack` and `watchdog` compare all descriptor fields and return FAILSAFE/event=5 on observed change; 56 one-bit negative tests (source stamp/required flags/dependency mask) are included. This is not tamper-proof against arbitrary shared-memory corruption, pointer races or adversarial source changes: a host must bind real source digests and protect memory. This is an L0 structural invariant only.
