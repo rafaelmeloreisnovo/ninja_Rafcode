@@ -1,0 +1,23 @@
+# Scoped authorial L0 verifier. Existing Ninja workflows are not altered.
+name: RAFCODE freestanding 8 ABI + ELF verifier
+on:
+  pull_request:
+    paths:
+      - 'rafcode/build/**'
+      - '.github/workflows/rafcode-freestanding-abi.yml'
+  push:
+    paths:
+      - 'rafcode/build/**'
+      - '.github/workflows/rafcode-freestanding-abi.yml'
+permissions:
+  contents: read
+jobs:
+  producer-l0:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify original freestanding build gate and all eight .o files
+        run: sh rafcode/build/test.sh
+      - name: Verify ELF admission parser, objects, dynamic dependencies and Android .so
+        run: sh rafcode/build/ci/verify_abi.sh
