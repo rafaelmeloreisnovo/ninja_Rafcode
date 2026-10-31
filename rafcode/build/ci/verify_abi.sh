@@ -60,3 +60,5 @@ for spec in 'armeabi-v7a:armv7a-linux-androideabi24:ARM:ELF32' 'arm64-v8a:aarch6
   wc -c < "$OUT/librafb-$abi.so"
 done
 printf 'SCOPE=BUILD_AND_ELF_INSPECTION_ONLY RUNTIME=TOKEN_VAZIO APK=TOKEN_VAZIO\n'
+# The single existing producer-l0 workflow invokes this scoped extension.
+sh rafcode/build/ci/verify_watchdog.sh
