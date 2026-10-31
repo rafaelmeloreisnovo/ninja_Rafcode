@@ -62,3 +62,4 @@ done
 printf 'SCOPE=BUILD_AND_ELF_INSPECTION_ONLY RUNTIME=TOKEN_VAZIO APK=TOKEN_VAZIO\n'
 # The single existing producer-l0 workflow invokes this scoped extension.
 sh rafcode/build/ci/verify_watchdog.sh
+sh rafcode/build/ci/verify_sha3.sh
