@@ -92,3 +92,11 @@ TMD_EVIDENCE=local x86-64 tests and cross-ELF structural checks only
 TMD_STATE=TOKEN_VAZIO
 
 R3 = <ELF build and host tests PASS_SCOPED, X11 GUI/Android/bare-metal TOKEN_VAZIO, extend Xauthority/graphics with bounded adversarial tests>
+## Bare-metal sibling (isolated, not the X11 client)
+
+The original `x11boot.S` described above remains the Linux-syscall ELF candidate.
+A new independent `baremetal/` module tree implements an ARMv7/AArch64 no-syscall
+PL011 serial boot experiment; see [its source and evidence](baremetal/README.md)
+and the [append-only pointer](baremetal/001_PONTEIRO/2026-11-07_BM_V1_RECEIPT.md).
+The two binaries have different execution contracts and must not be conflated.
+No evidence of QEMU or physical ARM boot is claimed by the bare-metal code.
