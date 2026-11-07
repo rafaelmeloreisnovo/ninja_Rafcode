@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Hosted-only test fixture, never linked to freestanding ELFs."""
 import os
+import secrets
 import socket
 import subprocess
 import threading
 from pathlib import Path
 
-path = "/tmp/raf-x11mock0"
+path = "/tmp/x11-" + secrets.token_hex(4)
+assert len(path) == 17
 elf = str(Path(__file__).with_name("x11boot-test-x86_64.elf"))
 subprocess.run([
     "clang", "--target=x86_64-linux-gnu",
