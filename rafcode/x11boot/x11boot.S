@@ -63,10 +63,13 @@ _start:
   test %rax, %rax
   js .Lx11_close_fail_x64
 
-  mov $1, %eax
+  mov $44, %eax                 /* Linux sendto + MSG_NOSIGNAL */
   mov %r12, %rdi
   lea 9b(%rip), %rsi
   mov $12, %edx
+  mov $0x4000, %r10d
+  xor %r8d, %r8d
+  xor %r9d, %r9d
   syscall
   cmp $12, %rax
   jne .Lx11_close_fail_x64
@@ -188,7 +191,10 @@ _start:
   adrp x1, 9b
   add x1, x1, :lo12:9b
   mov x2, #12
-  mov x8, #64
+  mov x3, #0x4000               /* MSG_NOSIGNAL */
+  mov x4, #0
+  mov x5, #0
+  mov x8, #206                  /* Linux sendto */
   svc #0
   cmp x0, #12
   b.ne .Lx11_close_fail_a64
@@ -311,7 +317,10 @@ _start:
   mov r0, r4
   ldr r1, =9b
   mov r2, #12
-  mov r7, #4
+  mov r3, #0x4000               /* MSG_NOSIGNAL */
+  mov r5, #0
+  mov r6, #0
+  mov r7, #290                  /* Linux sendto */
   svc #0
   cmp r0, #12
   bne .Lx11_close_fail_arm
