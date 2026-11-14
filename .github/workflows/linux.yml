@@ -126,7 +126,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt update
-          apt install -y cmake python3-pytest ninja-build python3-pip clang libgtest-dev
+          apt install -y cmake python3-pytest ninja-build python3-pip clang lld libgtest-dev
 
       - name: Configure (GCC)
         run: cmake -Bbuild-gcc -DCMAKE_BUILD_TYPE=Debug -G'Ninja Multi-Config'
